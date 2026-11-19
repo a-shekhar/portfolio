@@ -1,599 +1,65 @@
-import React, { useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
-import {
-  ArrowRight,
-  Github,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-  ExternalLink,
-  Rocket,
-  Award,
-  BriefcaseBusiness,
-  Code2,
-  Database,
-  Cloud,
-  ShieldCheck,
-  Sparkles,
-  ChevronRight,
-  Building2,
-} from "lucide-react";
+﻿import React, { useEffect, useState } from 'react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Menu, X, Github, Linkedin, Mail, Download, Database, Layers3, Braces, Moon, Sun } from 'lucide-react';
 
-import { Button } from "./components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
-import { Badge } from "./components/ui/badge";
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "./components/ui/tooltip";
-import { Input } from "./components/ui/input";
-import ThemeToggle from "./components/ThemeToggle";
-import Publications from "./modules/Publications/Publications";
-import Certifications from "./modules/Certifications";
-import HeroTechGrid from "./components/skills/HeroTechGrid.jsx";
-import ResumeButton from "./components/ui/ResumeButton";
-import Contact from "./modules/Contact";
-import Background from "./components/ui/Background";
-import Skills from "./modules/Skills";
+import { ImpactStrip, AdditionalWork, CareerExperience, Certifications } from './CareerSections';
 
+const projects = [
+  { number: '01', type: 'PLATFORM & AI / T-MOBILE', title: 'Knowledge that works harder.', name: 'DocHub & EX AI', description: 'Owned the documentation hub for an engineering portal serving 10,000+ users. Rebuilt its document lifecycle and created the retrieval pipeline powering its AI assistant and MCP server.', tags: ['Java 25', 'Spring Boot 4', 'RAG', 'OpenSearch'], visual: 'data' },
+  { number: '02', type: 'FULL-STACK / INDEPENDENT PRODUCT', title: 'Art, made accessible online.', name: 'Anjori Arts', description: 'Built a production storefront for handmade Indian art, from catalog and payments to custom commissions and an admin console. Now running as a single Next.js application.', tags: ['Next.js', 'TypeScript', 'Supabase', 'Razorpay'], visual: 'art', link: 'https://www.anjoriarts.com' },
+  { number: '03', type: 'DATA ENGINEERING / SIGMOID', title: 'Data pipelines built to scale.', name: 'Databricks ingestion framework', description: 'Designed a configurable framework for loading source data into Delta tables, onboarding approximately 200 tables at launch with built-in controls for sensitive data.', tags: ['Databricks', 'PySpark', 'Delta Lake', 'Azure'], visual: 'code' },
+];
+const skills = [
+  ['01', 'Backend engineering', 'Java 25, Spring Boot 4, REST APIs, microservices'],
+  ['02', 'Data platforms', 'Databricks, Spark, Delta Lake, SQL, Python, OpenSearch'],
+  ['03', 'Cloud & delivery', 'Azure, Google Cloud Run, Kubernetes, Docker, CI/CD'],
+  ['04', 'Full-stack development', 'React, Next.js, TypeScript, Tailwind CSS, PostgreSQL'],
+  ['05', 'Applied AI', 'RAG, embeddings, hybrid search, OpenSearch, MCP, Gemini'],
+];
 
-
-const RESUME = {
-  name: "Aditya Raj",
-  headline:
-    "Senior Software Engineer — Java/Spring Boot · Data Engineering · Azure/GCP",
-  location: "Bengaluru, Karnataka, India",
-  email: "rajaditya1857@gmail.com",
-  phone: "+91 77951 65084",
-  links: {
-    github: "https://github.com/a-shekhar",
-    linkedin: "https://www.linkedin.com/in/ashekharr/",
-  },
-  summary:
-    "SDE with 7+ years across Java/Spring Boot microservices and Spark/Databricks on Azure. Delivered outcomes for Conagra Brands (CPG) and PSCU (payments). Strengths in CDC architectures, governed analytics, PII protection (encryption/RBAC), and Azure DevOps CI/CD. Built Anjori Arts (React + Spring Boot) demonstrating end-to-end ownership.",
-  experience: [
-    {
-      company: "Sigmoid",
-      role: "Software Engineer (SDE‑2)",
-      location: "Bengaluru, India",
-      dates: "Jun 2022 – Present",
-      client: "Conagra Brands (Consumer Packaged Goods)",
-      bullets: [
-        "Designed a Databricks CDC framework replacing full refreshes with daily increments.",
-        "Built ingestion/curation pipelines on Azure with standardized schemas.",
-        "Unified SAP R/3 and S/4 data via robust merge logic for reliable analytics.",
-        "Implemented automated PII removal with long‑term enforcement.",
-        "Enforced SQL standards using SQLFluff in CI for repo‑wide consistency.",
-        "Added column‑level encryption with RBAC for fine‑grained controls.",
-        "Established Azure DevOps multi‑stage CI/CD reducing manual release friction.",
-        "Mentored new hires; coordinated a 4–6 engineer squad and worked with client architects.",
-      ],
-      tech: [
-        "Databricks",
-        "Spark",
-        "Delta Lake",
-        "Python",
-        "SQL",
-        "Azure",
-        "ADF",
-        "Synapse",
-        "AKS",
-        "Key Vault",
-        "Azure DevOps",
-      ],
-    },
-    {
-      company: "Accenture",
-      role: "Full‑Stack Developer",
-      location: "Bengaluru, India",
-      dates: "Jul 2018 – Jun 2022",
-      client: "PSCU (Payments/Credit Unions)",
-      bullets: [
-        "Built pricing/configuration platform and billing automations.",
-        "Implemented discount and price‑adjustment automation with guardrails.",
-        "Established unit testing and supported tech upgrades.",
-        "Partnered with QA/BA & client stakeholders to harden releases.",
-      ],
-      tech: [
-        "Java",
-        "Spring",
-        "Hibernate",
-        "EJB",
-        "JSF",
-        "PrimeFaces",
-        "Oracle SQL",
-        "Git",
-        "Maven",
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Anjori Arts — E‑commerce Platform",
-      year: "2025 – Present",
-      description:
-        "Production app for original artwork. Mobile‑first UI, SEO, clean code, and fast loads.",
-      bullets: [
-        "Auth: signup with OTP, email verification, session login, forgot password.",
-        "Custom Orders: multi‑image upload, CropperJS cropping, metadata, admin status mgmt.",
-        "Infra: Cloudinary, Neon Postgres; Redis for active‑user tracking.",
-        "Admin: modern dashboards, optimistic updates, accessibility best practices.",
-      ],
-      tech: [
-        "React",
-        "Vite",
-        "Tailwind 4.x",
-        "Spring Boot",
-        "Cloudinary",
-        "PostgreSQL",
-        "Redis",
-      ],
-      link: "https://www.anjoriarts.com",
-    },
-
-    {
-      name: "Currency Converter — Microservice",
-      year: "2024",
-      description:
-        "Lightweight Spring Boot microservice that converts between currencies in real-time using exchange-rate API with caching.",
-      bullets: [
-        "Exposes REST endpoints: /convert?from=USD&to=INR&amount=100",
-        "In-memory and Redis cache with TTL to cut API calls by 90%",
-        "Circuit breaker + retry (resilience4j) and request tracing (SLF4J/MDC)",
-        "Containerized with Docker; CI on GitHub Actions; ready for Azure App Service",
-      ],
-      tech: [
-        "Java",
-        "Spring Boot",
-        "Microservices",
-        "API Gateway",
-        "Docker",
-        "Kubernetes",
-        "Load Balancer",
-        "ZipKin",
-        "Circuit Breaker",
-      ],
-      link: "https://github.com/a-shekhar/microservices-tutorial",
-    },
-  ],
-  awards: [
-    { title: "SPOT Award", org: "Sigmoid", when: "Q2 2024" },
-    { title: "SPOT Award", org: "Sigmoid", when: "Q3 2023" },
-    { title: "Pinnacle Award", org: "Accenture", when: "—" },
-    { title: "SPARK Award", org: "Accenture", when: "—" },
-  ],
-};
-
-const Section = ({ id, className = "", children }) => (
-  <section id={id} className={`relative scroll-mt-24 ${className}`}>
-    {children}
-  </section>
-);
-
-const FadeIn = ({
-  delay = 0,
-  duration = 0.6,
-  y = 16,
-  children,
-  className = "",
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
-    viewport={{ once: true, amount: 0.2 }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-const Divider = () => (
-  <div className="h-px w-full bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
-);
-
-const Nav = () => {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 20,
-    mass: 0.3,
+function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dark, setDark] = useState(() => {
+    try { const saved = localStorage.getItem('portfolio-theme'); return saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches; } catch { return false; }
   });
-
-  const links = [
-    { href: "#about", label: "About" },
-    { href: "#experience", label: "Experience" },
-    { href: "#projects", label: "Projects" },
-    { href: "#skills", label: "Skills" },
-    { href: "#awards", label: "Awards" },
-    { href: "#certifications", label: "Certifications" },
-    { href: "#publications", label: "Publications" },
-  ];
-
-  return (
-    <header className="fixed top-0 z-50 w-full backdrop-blur supports-[backdrop-filter]:bg-zinc-900/60 bg-zinc-950/60 border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="flex h-16 items-center justify-between">
-          <a href="#home" className="group inline-flex items-center gap-2">
-            <Rocket className="h-5 w-5 text-violet-400 group-hover:rotate-12 transition" />
-            <span className="font-semibold text-zinc-200">Aditya Raj</span>
-          </a>
-          <nav className="hidden md:flex items-center gap-6">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="text-sm text-zinc-300 hover:text-white transition"
-              >
-                {l.label}
-              </a>
-            ))}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a href={`mailto:${RESUME.email}`} className="ml-2">
-                    <Button
-                      size="sm"
-                      className="bg-violet-600 hover:bg-violet-500 text-white"
-                    >
-                      <Mail className="mr-2 h-4 w-4" /> Contact
-                    </Button>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>Drop me a line</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <ThemeToggle />
-          </nav>
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    try { localStorage.setItem('portfolio-theme', dark ? 'dark' : 'light'); } catch { /* Theme still works without storage. */ }
+  }, [dark]);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    const elements = document.querySelectorAll('.project, .skill, .experience-list article, .section-heading, .about-grid, .contact-main');
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: 0.08 });
+    elements.forEach(element => { element.classList.add('reveal'); observer.observe(element); });
+    return () => observer.disconnect();
+  }, []);
+  const closeMenu = () => setMenuOpen(false);
+  return <div className="site-shell" id="top">
+    <header className="header"><div className="header-inner wrap">
+      <a href="#top" className="brand" onClick={closeMenu} aria-label="Aditya Raj, home"><span className="brand-mark">A<span>.</span></span><span>ADITYA RAJ <small>SOFTWARE ENGINEER</small></span></a>
+      <nav className={menuOpen ? 'nav open' : 'nav'} aria-label="Main navigation">
+        <a onClick={closeMenu} href="#work">Work</a><a onClick={closeMenu} href="#about">About</a><a onClick={closeMenu} href="#experience">Experience</a><a onClick={closeMenu} href="#certifications">Credentials</a><a onClick={closeMenu} href="#contact">Contact</a>
+        <a className="nav-resume" href="/Aditya_Raj_Resume_v2.pdf" target="_blank" rel="noreferrer">Resume <ArrowUpRight size={15}/></a>
+      </nav>
+      <div className="header-actions"><button className="theme-button" onClick={() => setDark(!dark)} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} title={dark ? "Switch to light mode" : "Switch to dark mode"}>{dark ? <Sun size={18}/> : <Moon size={18}/>}</button><button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>{menuOpen ? <X/> : <Menu/>}</button></div>
+    </div></header>
+    <main>
+      <section className="hero wrap" aria-labelledby="hero-title">
+        <div className="hero-copy"><div className="eyebrow"><span className="status-dot"/> SENIOR SOFTWARE ENGINEER <span className="eyebrow-divider"/> HYDERABAD, INDIA</div>
+          <h1 id="hero-title">Backend. Data.<br/><em>AI, built for</em><br/>production<span className="accent">.</span></h1>
+          <p className="hero-description">Hi, I’m Aditya. I build the platforms, data systems, and AI experiences behind work that matters - from a 10,000+ user engineering portal to products built from the ground up.</p>
+          <div className="hero-actions"><a className="button button-dark" href="#work">Explore my work <ArrowDown size={17}/></a><a className="text-link" href="#contact">Let’s connect <ArrowUpRight size={17}/></a></div>
         </div>
-      </div>
-      <motion.div
-        style={{ scaleX }}
-        className="h-[2px] w-full origin-left bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400"
-      />
-    </header>
-  );
-};
-
-const Hero = () => {
-  return (
-    <Section id="home" className="pt-28">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-          <FadeIn className="md:col-span-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
-              <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-              Available for SDE‑3/Staff roles
-            </div>
-            <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight text-white">
-              Building reliable{" "}
-              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-300 bg-clip-text text-transparent">
-                microservices
-              </span>{" "}
-              & scalable{" "}
-              <span className="bg-gradient-to-r from-cyan-300 to-teal-300 bg-clip-text text-transparent">
-                data platforms
-              </span>
-            </h1>
-            <p className="mt-4 text-zinc-300 leading-relaxed">
-              {RESUME.summary}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#projects">
-                <Button className="bg-violet-600 hover:bg-violet-500 text-white">
-                  View Projects <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </a>
-              <a href={RESUME.links.github} target="_blank" rel="noreferrer">
-                <Button
-                  variant="outline"
-                  className="border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10"
-                >
-                  <Github className="mr-2 h-4 w-4" /> GitHub
-                </Button>
-              </a>
-              <a href={RESUME.links.linkedin} target="_blank" rel="noreferrer">
-                <Button
-                  variant="outline"
-                  className="border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10"
-                >
-                  <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
-                </Button>
-              </a>
-
-              {/* aligned with the row */}
-              <ResumeButton variant="secondary" /* size="default" */ />
-            </div>
-            <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-zinc-400">
-              <div className="inline-flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                {RESUME.location}
-              </div>
-              <a
-                className="inline-flex items-center gap-2 hover:text-zinc-200"
-                href={`tel:${RESUME.phone.replace(/\\s/g, "")}`}
-              >
-                <Phone className="h-4 w-4" />
-                {RESUME.phone}
-              </a>
-              <a
-                className="inline-flex items-center gap-2 hover:text-zinc-200"
-                href={`mailto:${RESUME.email}`}
-              >
-                <Mail className="h-4 w-4" />
-                {RESUME.email}
-              </a>
-            </div>
-          </FadeIn>
-
-          <FadeIn delay={0.1} className="md:col-span-5">
-            <div className="relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="aspect-square w-full rounded-3xl bg-gradient-to-br from-zinc-800 to-zinc-900 p-1 shadow-2xl"
-              >
-                <div className="relative h-full w-full rounded-3xl bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.25),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(34,211,238,0.2),transparent_35%)]">
-                  <div className="absolute inset-0 rounded-3xl border border-white/10" />
-                  <div className="absolute inset-0 rounded-3xl mix-blend-overlay opacity-40 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-                  <div className="absolute inset-6 grid grid-cols-2 gap-3">
-                    <HeroTechGrid />
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </FadeIn>
-        </div>
-      </div>
-    </Section>
-  );
-};
-
-const Experience = () => {
-  const items = Array.isArray(RESUME?.experience) ? RESUME.experience : [];
-
-  return (
-    <Section id="experience" className="py-20">
-      <div className="mx-auto max-w-7xl px-4">
-        <FadeIn>
-          <h2 className="text-2xl md:text-3xl font-bold text-white">
-            Experience
-          </h2>
-          <p className="mt-2 text-zinc-400">
-            Impact-first highlights across data platforms and backend systems.
-          </p>
-        </FadeIn>
-
-        <div className="mt-10 grid gap-6">
-          {items.map((exp, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: idx % 2 ? 24 : -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <Card className="bg-zinc-900/60 border-white/10">
-                <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <BriefcaseBusiness className="h-5 w-5 text-violet-400" />{" "}
-                      {exp?.role}
-                    </CardTitle>
-                    <div className="mt-1 text-sm text-zinc-400 flex flex-wrap items-center gap-2">
-                      <Building2 className="h-4 w-4" /> {exp?.company} •{" "}
-                      {exp?.location} • {exp?.dates}
-                    </div>
-                    {exp?.client && (
-                      <div className="mt-1 text-sm text-zinc-400">
-                        Client: {exp.client}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {(exp?.tech ?? exp?.stack ?? []).map((s) => (
-                      <Badge
-                        key={s}
-                        className="bg-white/5 text-zinc-200 border-white/10"
-                      >
-                        {s}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardHeader>
-
-                <CardContent className="pt-0">
-                  <ul className="grid gap-2 text-zinc-300 list-disc ml-6">
-                    {(exp?.bullets ?? []).map((b, i) => (
-                      <li key={i}>{b}</li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
-};
-
-const Projects = () => {
-  const [query, setQuery] = useState("");
-  const items = RESUME.projects.filter((p) =>
-    (p.name + p.description + p.tech.join(" "))
-      .toLowerCase()
-      .includes(query.toLowerCase())
-  );
-  return (
-    <Section id="projects" className="py-20">
-      <div className="mx-auto max-w-7xl px-4">
-        <FadeIn>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
-                Projects
-              </h2>
-              <p className="mt-2 text-zinc-400">
-                Selected work that shows craft, performance, and ownership.
-              </p>
-            </div>
-            <div className="md:w-80">
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search projects…"
-                className="bg-zinc-900/60 border-white/10 text-zinc-200 placeholder:text-zinc-500"
-              />
-            </div>
-          </div>
-        </FadeIn>
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {items.map((p, i) => (
-            <motion.a
-              key={p.name}
-              href={p.link}
-              target="_blank"
-              rel="noreferrer"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.05 }}
-              className="group relative block overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-zinc-900/80 to-zinc-950 p-6"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-white">{p.name}</h3>
-                  <p className="mt-1 text-sm text-zinc-400">{p.year}</p>
-                </div>
-                <ExternalLink className="h-5 w-5 text-zinc-400 group-hover:text-zinc-200 transition" />
-              </div>
-              <p className="mt-4 text-zinc-300">{p.description}</p>
-              <ul className="mt-4 grid list-disc ml-5 gap-1 text-sm text-zinc-400">
-                {p.bullets.map((b, idx) => (
-                  <li key={idx}>{b}</li>
-                ))}
-              </ul>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {p.tech.map((t) => (
-                  <Badge
-                    key={t}
-                    className="bg-white/5 text-zinc-200 border-white/10"
-                  >
-                    {t}
-                  </Badge>
-                ))}
-              </div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-violet-500/10 via-fuchsia-500/10 to-cyan-500/10"
-              />
-            </motion.a>
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
-};
-
-
-const Awards = () => (
-  <Section id="awards" className="py-20">
-    <div className="mx-auto max-w-7xl px-4">
-      <FadeIn>
-        <h2 className="text-2xl md:text-3xl font-bold text-white">Awards</h2>
-        <p className="mt-2 text-zinc-400">A few recognitions along the way.</p>
-      </FadeIn>
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {RESUME.awards.map((a, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.05 }}
-          >
-            <Card className="bg-zinc-900/60 border-white/10">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Award className="h-5 w-5 text-amber-300" /> {a.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0 text-zinc-300">
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4" /> {a.org}
-                </div>
-                <div className="text-sm text-zinc-400 mt-1">{a.when}</div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </Section>
-);
-
-
-export default function App() {
-  return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-zinc-950 text-zinc-200 antialiased">
-        <Background />
-        <Nav />
-        <main>
-          <Hero />
-          <Divider />
-          <Experience />
-          <Divider />
-          <Projects />
-          <Divider />
-          <Skills />
-          <Divider />
-          <Awards />
-          <Divider />
-          <Certifications />
-          <Divider />
-          <Publications />
-          <Divider />
-        </main>
-
-        <Contact />
-
-        <footer className="mt-20 border-t border-white/5 bg-zinc-950/60 backdrop-blur">
-          <div className="mx-auto max-w-7xl px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-zinc-500">
-              © {new Date().getFullYear()} Aditya Raj • Built with React +
-              Tailwind
-            </div>
-            <div className="flex items-center gap-3">
-              <a
-                href={RESUME.links.github}
-                className="text-zinc-400 hover:text-zinc-200"
-              >
-                <Github className="h-5 w-5" />
-              </a>
-              <a
-                href={RESUME.links.linkedin}
-                className="text-zinc-400 hover:text-zinc-200"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href={`mailto:${RESUME.email}`}
-                className="text-zinc-400 hover:text-zinc-200"
-              >
-                <Mail className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </TooltipProvider>
-  );
+        <div className="hero-art" aria-label="Illustration of a connected software system"><div className="art-top"><span>ENGINEERED WITH INTENT</span><span>✳</span></div><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="orbit-center"><span>A<span>.</span></span><small>BUILD / SOLVE / SHIP</small></div><div className="orbit-label label-one"><span/> BACKEND</div><div className="orbit-label label-two"><span/> DATA</div><div className="orbit-label label-three"><span/> CLOUD</div><div className="orbit-label label-four"><span/> AI</div><div className="art-bottom"><span>FROM IDEA TO IMPACT</span><span>01 — 03</span></div></div>
+        <div className="hero-bottom"><span>SCROLL TO EXPLORE <ArrowDown size={14}/></span><span>BUILDING FOR WHAT’S NEXT ↗</span></div>
+      </section>
+      <ImpactStrip/><section className="intro-band"><div className="wrap intro-inner"><span className="section-kicker light">A LITTLE ABOUT ME</span><p>I like building things that <em>work beautifully</em> — from the services behind the screen to the data that drives decisions.</p><a href="#about" aria-label="More about Aditya"><ArrowDown size={22}/></a></div></section>
+      <section id="work" className="section wrap"><div className="section-heading"><div><div className="section-kicker"><span>01 / SELECTED WORK</span></div><h2>Built with purpose<span className="accent">.</span></h2></div><p>A selection of work across data engineering, backend systems, and product development.</p></div>
+        <div className="projects">{projects.map((p) => <article className="project" key={p.number}><div className={'project-visual '+p.visual}><div className="visual-header"><span>{p.type}</span><span>↗</span></div>{p.visual === 'data' ? <div className="data-graphic"><div className="data-node"><Database/><span>DOCS</span></div><div className="data-line"><i/><i/><i/></div><div className="data-node main-node"><Layers3/><span>RAG + SEARCH</span></div><div className="data-line"><i/><i/><i/></div><div className="data-node"><Braces/><span>AI ASSISTANT</span></div></div> : p.visual === 'art' ? <div className="art-graphic"><span>ANJORI<br/><i>arts.</i></span><div className="art-shape shape-one"/><div className="art-shape shape-two"/><small>ART THAT TELLS A STORY</small></div> : <div className="code-graphic"><div className="code-dots">● &nbsp;● &nbsp;●</div><div><span>01</span> <b>class</b> DataPipeline {'{'}</div><div><span>02</span> &nbsp; buildReliableSystems();</div><div><span>03</span> &nbsp; automateTheComplex();</div><div><span>04</span> {'}'}</div></div>}<div className="visual-footer"><span>SELECTED WORK / {p.number}</span><span>ADITYA RAJ ©</span></div></div><div className="project-copy"><div className="project-meta"><span>{p.number} / {p.name}</span>{p.link && <a href={p.link} target="_blank" rel="noreferrer" aria-label="Visit Anjori Arts"><ArrowUpRight size={21}/></a>}</div><h3>{p.title}</h3><p>{p.description}</p><div className="tags">{p.tags.map(tag => <span key={tag}>{tag}</span>)}</div>{p.link && <a className="project-link" href={p.link} target="_blank" rel="noreferrer">Visit website <ArrowUpRight size={16}/></a>}</div></article>)}</div><AdditionalWork/>
+      </section>
+      <section id="about" className="about-section"><div className="wrap about-grid"><div><div className="section-kicker"><span>02 / THE PERSON BEHIND THE CODE</span></div><h2>Curious by nature.<br/><em>Engineer</em> by craft<span className="accent">.</span></h2></div><div className="about-copy"><p>I am Aditya, a senior software engineer in Hyderabad with 8+ years across backend platforms, data engineering, and applied AI. At T-Mobile, I own DocHub within the Engineering Experience portal, from the document lifecycle to the knowledge pipeline powering AI assistants.</p><p>Whether I’m designing a data pipeline, strengthening access controls, or building a product from the ground up, I care about making complex systems simpler and more dependable.</p><a className="text-link" href="/Aditya_Raj_Resume_v2.pdf" target="_blank" rel="noreferrer">A closer look at my resume <Download size={16}/></a></div></div><div className="wrap skills-grid">{skills.map(([n,title,description]) => <div className="skill" key={n}><span>{n} /</span><h3>{title}</h3><p>{description}</p></div>)}</div></section>
+      <CareerExperience/><Certifications/>
+      <section id="contact" className="contact-section"><div className="wrap"><div className="contact-top"><div className="section-kicker light">05 / GET IN TOUCH</div><span>HAVE A PROJECT OR OPPORTUNITY?</span></div><div className="contact-main"><h2>Let’s make<br/><em>something</em> matter<span>.</span></h2><div><p>Good things start with a conversation. If you have an idea, a challenge, or just want to say hello, my inbox is open.</p><a href="mailto:rajaditya1857@gmail.com" className="button button-light">Say hello <ArrowUpRight size={18}/></a></div></div><div className="contact-bottom"><a href="mailto:rajaditya1857@gmail.com">rajaditya1857@gmail.com <ArrowUpRight size={16}/></a><div><a href="https://github.com/a-shekhar" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={19}/></a><a href="https://www.linkedin.com/in/ashekharr/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={19}/></a><a href="mailto:rajaditya1857@gmail.com" aria-label="Email"><Mail size={19}/></a></div></div></div></section>
+    </main><footer className="footer wrap"><span>© {new Date().getFullYear()} ADITYA RAJ</span><span>DESIGNED TO BUILD CONNECTIONS <span className="accent">✳</span></span><a href="#top">BACK TO TOP ↑</a></footer>
+  </div>
 }
+export default App;

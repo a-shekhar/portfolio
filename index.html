@@ -1,21 +1,13 @@
-<!doctype html>
-<html lang="en" class="dark">
+﻿<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
-    <title>Aditya Raj — Portfolio</title>
-    <script>
-    (function(){
-      try {
-        const ls = localStorage.getItem('theme');
-        const wantDark = ls ? ls === 'dark' : true;
-        document.documentElement.classList.toggle('dark', wantDark);
-      } catch(e){}
-    })();
-  </script>
+    <meta name="theme-color" content="#263c30" />
+    <meta name="description" content="Aditya Raj is a Hyderabad-based software engineer building reliable backend systems, data platforms, and thoughtful digital products." />
+    <title>Aditya Raj — Software Engineer</title>
   </head>
-  <body class="bg-zinc-950">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
