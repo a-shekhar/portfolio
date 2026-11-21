@@ -2,3 +2,7 @@
 node_modules
 dist
 .vite
+
+# Environment files may contain credentials, including example files.
+.env
+.env.*
